@@ -1,6 +1,6 @@
 # orders
 
-The implementation can be access in the site: http://54.166.76.213/
+The implementation can be accessed in the site: http://54.166.76.213/
 
 The apis can also be accessed directly: 
   Save order (POST): http://54.166.76.213/api/orders
