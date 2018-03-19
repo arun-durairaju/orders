@@ -1,5 +1,6 @@
 <html>
   <head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <style type="text/css">
 .form-style-1 {
     margin:10px auto;
@@ -87,33 +88,105 @@ select{
 </style>
   </head>
   <body>
-    <form>
+    <div style="width: 50%; position: absolute; left: 0px;">
+    <form id="saveOrder">
       <ul class="form-style-1">
+        <li><h3>Save Order</h3></li>
         <li>
-          <label>Full Name <span class="required">*</span></label>
-          <input type="text" name="field1" class="field-divided" placeholder="First" />&nbsp;
-          <input type="text" name="field2" class="field-divided" placeholder="Last" />
+          <label>order_id</label>
+          <input type="number" id="orderId" class="field-divided" placeholder="Order id" />&nbsp;
         </li>
         <li>
-          <label>Email <span class="required">*</span></label>
-          <input type="email" name="field3" class="field-long" />
+          <label>Product</label>
+          <input type="text" id="product" class="field-divided" placeholder="Product name"/>
         </li>
         <li>
-          <label>Subject</label>
-          <select name="field4" class="field-select">
-          <option value="Advertise">Advertise</option>
-          <option value="Partnership">Partnership</option>
-          <option value="General Question">General</option>
-          </select>
+          <label>Quantity</label>
+          <input type="number" id="qty" class="field-divided" />
         </li>
         <li>
-          <label>Your Message <span class="required">*</span></label>
-          <textarea name="field5" id="field5" class="field-long field-textarea"></textarea>
+          <label>Create timestamp</label>
+          <input type="datetime-local" id="createTime" class="field-divided" />
+        </li>
+        <li>
+          <label>Update timestamp</label>
+          <input type="datetime-local" id="updateTime" class="field-divided" />
         </li>
         <li>
           <input type="submit" value="Submit" />
         </li>
       </ul>
     </form>
+    <form id="getOrder">
+      <ul class="form-style-1">
+        <li><h3>Get Order</h3></li>
+        <li>
+          <label>order_id</label>
+          <input type="number" id="gorderId" class="field-divided" placeholder="Order id" />&nbsp;
+        </li>
+        <li>
+          <input type="submit" value="Get Order" />
+        </li>
+      </ul>
+    </form>
+    <form id="topProducts">
+      <ul class="form-style-1">
+        <li><h3>Top Products</h3></li>
+        <li>
+          <label>Create timestamp</label>
+          <input type="datetime-local" id="tcreateTime" class="field-divided" />
+        </li>
+        <li>
+          <label>Update timestamp</label>
+          <input type="datetime-local" id="tupdateTime" class="field-divided" />
+        </li>
+        <li>
+          <label>Number or Products</label>
+          <input type="number" id="tcount" class="field-divided" value="5"/>&nbsp;
+        </li>
+        <li>
+          <input type="submit" value="Submit" />
+        </li>
+      </ul>
+    </form>
+    </div>
+    <div style="width: 50%; position: absolute; right: 0px; margin-top: 20px">
+      <ul class="form-style-1">
+        <li><h3>Results</h3></li>
+        <li><pre id="results"></pre></li>
+      </ul>
+    </div>
   </body>
+<script>
+$(document).ready(function(){
+    $("#saveOrder").submit(function(event){
+      var order = {
+        "id": $("#orderId").val(),
+        "product": $("#product").val(),
+        "qty": $("#qty").val(),
+        "createTime": $("#createTime").val(),
+        "updateTime": $("#updateTime").val()
+      };
+      $.post("/api/orders", order, function(data) {
+        $("#results").html(JSON.stringify(data, null, 4));
+      });
+      event.preventDefault();
+    });
+    $("#getOrder").submit(function(event) {
+      $.get( "/api/orders/" + $("#gorderId").val(), function( data ) {
+        $("#results").html(JSON.stringify(data, undefined, 4));
+      });
+      event.preventDefault();
+    });
+    $("#topProducts").submit(function(event) {
+      var q = "?n=" + $("#tcount").val();
+      if($("#tcreateTime").val() != "") { q += "&start=" + $("#tcreateTime").val(); }
+      if($("#tupdateTime").val() != "") { q += "&end=" + $("#tupdateTime").val(); }
+      $.get( "/api/orders/top" + q, function( data ) {
+        $("#results").html(JSON.stringify(data, null, 4));
+      });
+      event.preventDefault();
+    });
+});
+</script>
 </html>

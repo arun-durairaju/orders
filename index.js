@@ -13,7 +13,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 var server = app.listen(port, function() {
   var port = server.address().port;
-  console.log('Magic happens on port ' + port);
+  console.log('Server listening on port ' + port);
 });
 
 var router = express.Router();
@@ -39,7 +39,6 @@ router.route("/orders/:orderId").get((req, res) => {
 });
 
 router.route("/orders").post((req, res) => {
-console.log(req.body);
   console.log("Posting a new order");
   var order = {
     id: parseInt(req.body.id),
@@ -57,6 +56,6 @@ console.log(req.body);
   console.log("Saving order");
   console.log(order);
   orders.addOrder(order);
-  res.send("Saved order");
+  res.send({"status": "Success"});
 });
 
